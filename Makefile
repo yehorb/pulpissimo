@@ -59,7 +59,7 @@ Bender.lock: bender
 	touch Bender.lock
 
 else
-checkout: ipstools
+checkout:
 	./update-ips
 endif
 	$(MAKE) scripts
@@ -245,12 +245,6 @@ test-gitlab2:
 ## Generate lint reports with Spyglass
 lint:
 	$(MAKE) -C spyglass lint_rtl
-
-# IPStools Integration
-ipstools:
-	git clone https://github.com/pulp-platform/IPApprox.git ipstools
-	cd ipstools && git checkout 6b0bbc917e6be883bdb5fcc1765da59563b46d2e
-	pip install --user semver==2.13.0 pyyaml
 
 # Bender integration
 bender:
