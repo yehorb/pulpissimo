@@ -38,7 +38,7 @@ simc:
 
 opt:
 ifdef BENDER
-	$(VOPT) +acc=npr -o vopt_tb tb_pulp -floatparameters+tb_pulp -work work
+	$(VOPT) -suppress vopt-2732 +acc=npr -o vopt_tb tb_pulp -floatparameters+tb_pulp -work work
 else
 	$(mkfile_path)/tcl_files/rtl_vopt.tcl
 endif
