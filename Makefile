@@ -43,7 +43,7 @@ $(foreach file, $(INSTALL_FILES), $(eval $(call declareInstallFile,$(file))))
 
 BRANCH ?= master
 
-VLOG_ARGS += -suppress 2583 -suppress 13314
+VLOG_ARGS += -suppress 2583 -suppress 13314 \"+incdir+\$$ROOT/rtl/includes\"
 BENDER_SIM_BUILD_DIR = sim
 BENDER_FPGA_SCRIPTS_DIR = fpga/pulpissimo/tcl/generated
 
