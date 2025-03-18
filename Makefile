@@ -50,12 +50,12 @@ BENDER_FPGA_SCRIPTS_DIR = fpga/pulpissimo/tcl/generated
 .PHONY: checkout
 ## Checkout/update dependencies using IPApprox or Bender
 ifdef BENDER
-checkout: bender
-	./bender update
+checkout:
+	bender update
 	touch Bender.lock
 
-Bender.lock: bender
-	./bender update
+Bender.lock:
+	bender update
 	touch Bender.lock
 
 else
@@ -72,6 +72,11 @@ clean:
 	rm -rf $(VSIM_PATH)
 	$(MAKE) -C sim BENDER=$(BENDER) clean
 
+clean-bender:
+	rm -rf .bender
+	rm -rf bender
+	rm -rf Bender.lock
+
 .PHONY: scripts
 ifdef BENDER
 ## Generate scripts for all tools
@@ -79,18 +84,18 @@ scripts: scripts-bender-vsim scripts-bender-fpga
 
 scripts-bender-fpga: | Bender.lock
 	mkdir -p fpga/pulpissimo/tcl/generated
-	./bender script vivado -t fpga -t xilinx > $(BENDER_FPGA_SCRIPTS_DIR)/compile.tcl
+	bender script vivado -t fpga -t xilinx > $(BENDER_FPGA_SCRIPTS_DIR)/compile.tcl
 
 scripts-bender-vsim: | Bender.lock
 	echo 'set ROOT [file normalize [file dirname [info script]]/..]' > $(BENDER_SIM_BUILD_DIR)/compile.tcl
-	./bender script vsim \
+	bender script vsim \
 		--vlog-arg="$(VLOG_ARGS)" --vcom-arg="" \
 		-t rtl -t test \
 		| grep -v "set ROOT" >> $(BENDER_SIM_BUILD_DIR)/compile.tcl
 
-$(BENDER_SIM_BUILD_DIR)/compile.tcl: Bender.lock
+$(BENDER_SIM_BUILD_DIR)/compile.tcl: | Bender.lock
 	echo 'set ROOT [file normalize [file dirname [info script]]/..]' > $(BENDER_SIM_BUILD_DIR)/compile.tcl
-	./bender script vsim \
+	bender script vsim \
 		--vlog-arg="$(VLOG_ARGS)" --vcom-arg="" \
 		-t rtl -t test \
 		| grep -v "set ROOT" >> $(BENDER_SIM_BUILD_DIR)/compile.tcl
@@ -245,18 +250,6 @@ test-gitlab2:
 ## Generate lint reports with Spyglass
 lint:
 	$(MAKE) -C spyglass lint_rtl
-
-# Bender integration
-bender:
-ifeq (,$(wildcard ./bender))
-	curl --proto '=https' --tlsv1.2 -sSf https://fabianschuiki.github.io/bender/init \
-		| bash -s -- 0.22.0
-	touch bender
-endif
-
-.PHONY: bender-rm
-bender-rm:
-	rm -f bender
 
 .PHONY: help
 help: Makefile
